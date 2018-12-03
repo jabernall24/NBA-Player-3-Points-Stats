@@ -5,6 +5,7 @@ It gets the player's game, 3 point attempts and 3 point made from each game of t
 **Example**
 
 What player would you like to know the stats three point stats for: **Kobe Bryant**
+
 What year(btw: 1967 and now): **2014**
 
 | Game | Made | Taken |
