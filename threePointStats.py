@@ -12,29 +12,28 @@ def threePointStats(url):
     doc = bs(html, "html.parser")
 
     table = doc.find('div', id = 'all_pgl_basic')
-    mclass = table.find('div', class_ = 'overthrow table_container')
-    games_table = mclass.find('table', id = 'pgl_basic')
+    overthrow = table.find('div', class_ = 'overthrow table_container')
+    games_table = overthrow.find('table', id = 'pgl_basic')
     rows = games_table.find_all('tr')
 
-    games = []
-    three_pointers_made = []
-    three_pointers_taken = []
+    stats = []
+    args = (
+        ('strong',),
+        ("td", {'data-stat' : 'fg3'}),
+        ('td', {'data-stat' : 'fg3a'})
+    )
+    
     for row in rows:
-        game = row.find_all('strong')
-        for t in game:
-            games.append(t.text)
-        
-        threesMade = row.find_all('td', {'data-stat' : 'fg3'})
-        for t in threesMade:
-            three_pointers_made.append(t.text)
-
-        threesTaken = row.find_all('td', {'data-stat' : 'fg3a'})
-        for t in threesTaken:
-            three_pointers_taken.append(t.text)
+        game_stat = []
+        for arg in args:
+            ele = row.find(*arg)
+            game_stat.append(ele.text if ele else 0)
+        if any(game_stat):
+            stats.append(game_stat)
 
     print("Game\tMade\tTaken")
-    for games, made, taken in zip(games, three_pointers_made, three_pointers_taken):
-        print(games + "\t" + made + "\t" + taken)
+    for games, made, taken in stats:
+        print(str(games) + "\t" + str(made) + "\t" + str(taken))
 
 def compose_url(player, year):
     url = "https://www.basketball-reference.com/players/{}/{}{}01/gamelog/{}"
@@ -42,8 +41,10 @@ def compose_url(player, year):
     return url.format(last[0], last[:5], first[:2],year) 
 
 def main():
-    player = input("What player would you like to know the stats three point stats for: ")
-    year = input("What year(btw: 1967 and now): ")
+ #   player = input("What player would you like to know the three point stats for: ")
+ #   year = input("What year(btw: 1967 and now): ")
+    player = sys.argv[1] + " " + sys.argv[2]
+    year = sys.argv[3]
             
     url = compose_url(player, year)
     threePointStats(url)
